@@ -32,8 +32,8 @@ export default function ImageUploader({setImage, image, handleRemove}:{setImage:
                     }
                 }}/>
             </div>:
-            <div className="">
-                <img className="rounded-3xl" src={URL.createObjectURL(image)}/>
+            <div className="relative aspect-square w-full overflow-hidden rounded-3xl">
+                <img className="h-full w-full object-cover" src={URL.createObjectURL(image)}/>
                 <Button onClick={handleRemove} variant="danger-soft">
                     <CircleX/>
                 </Button>
