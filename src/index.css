@@ -1,2 +1,7 @@
 @import "tailwindcss";
 @import "@heroui/styles";
+
+html, body {
+  overflow: hidden; 
+  touch-action: pan-x pan-y;
+}
