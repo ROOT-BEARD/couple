@@ -22,6 +22,15 @@ export interface Request {
     status:string;
 }
 
+export interface User {
+    id?:string;
+    user_id:string;
+    pair_id?:string;
+    username:string;
+    pair_code?:string;
+}
+
 export type NewAccount = Omit<Account, "created_at">;
 export type NewMessage = Omit<Message, "id"|"created_at">;
 export type NewRequest = Omit<Request, "created_at"|"status">;
+export type NewUser = Omit<User, 'id'>

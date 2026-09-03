@@ -1,5 +1,5 @@
 import { supabase } from "../supabase-client";
-import type { NewRequest } from "../types/database";
+import type { NewRequest, NewUser } from "../types/database";
 
 export const pairService = {
     async pairById(user_id:string): Promise<string | null>{
@@ -65,17 +65,44 @@ export const pairService = {
             console.error("error accepting request: ", error.message);
         }
 
-        return data.id;
+        return data;
     },
-    async getUsernameById(user_id:string): Promise<string | null>{
+    async getUserById(user_id:string): Promise<NewUser | null>{
         const{data, error} = await supabase
         .from("users")
-        .select("username")
+        .select("*")
         .eq("user_id", user_id)
         .single();
 
-        if(error) console.error("error getting username: ", error.message);
+        if(error) console.error("error getting user: ", error.message);
 
-        return data ? data.username : null;
+        return data ?? null;
+    },
+    async pair(user_id:string, pair_id:string){
+        const { data:pairData, error:pairError } = await supabase
+        .from('users')
+        .update({pair_id:pair_id})
+        .eq('user_id', user_id)
+        .select()
+        .single();
+
+        if(pairError) {
+            console.error("can't pair: ", pairError.message);
+            return;
+        }
+
+        const {data:secondPairData, error:secondPairError} = await supabase
+        .from('users')
+        .update({pair_id:user_id})
+        .eq("user_id", pair_id)
+        .select()
+        .single();
+
+        if(secondPairError){
+            console.error("error pairing: ", secondPairError.message);
+            return;
+        }
+
+        return pairData && secondPairData;
     }
 }

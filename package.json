@@ -14,6 +14,7 @@
     "@heroui/styles": "^3.2.4",
     "@supabase/supabase-js": "^2.114.0",
     "@tailwindcss/vite": "^4.3.3",
+    "crypto": "^1.0.1",
     "lucide-react": "^1.39.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",

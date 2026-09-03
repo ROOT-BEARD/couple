@@ -27,7 +27,6 @@ export default function Dashboard(){
         const pairId = await pairService.getPairId(user.id);
 
         if(pairId && image && pair){        
-
             const img_url = await messageService.uploadImage(image,pairId)
 
             const newMessage : NewMessage = {
@@ -37,6 +36,8 @@ export default function Dashboard(){
             img_url: img_url
             }   
             await messageService.createMessage(newMessage);
+        } else {
+            console.error('oh no');
         }
     };
 

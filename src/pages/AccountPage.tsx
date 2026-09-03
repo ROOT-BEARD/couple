@@ -1,6 +1,6 @@
 import { Button, Card, Input, Typography } from "@heroui/react";
 import { accountService } from "../services/accountService";
-import type { NewAccount, NewRequest } from "../types/database";
+import type { NewAccount, NewRequest, NewUser } from "../types/database";
 import { useEffect, useState } from "react";
 import { useUser } from "../contexts/UserContexts";
 import SigninLogin from "../components/SigninLogin";
@@ -11,17 +11,17 @@ import { LogOut, SendHorizonal } from "lucide-react";
 export default function AccountPage(){
     const { user, isLoading } = useUser();
     const [ signInInfo, setSignInInfo ] = useState<NewAccount>({email:'',username:'',password:''});
-    const [ pairUsername, setPairUsername ] = useState<string>('');
+    const [ partenersCode, setPartenersCode ] = useState<number>(0);
     const [ requests, setRequests ] = useState<NewRequest[]>([]);
     const [ paired, setPaired ] = useState<boolean>(false);
-    const [ username, setUserName ] = useState<string|null>('');
+    const [ self, setSelf ] = useState<NewUser|null>();
 
     useEffect(()=>{
         if (isLoading || !user?.id) return;
         handleGetPairedStatus();
         handleGetRequests();
-        handleGetUsername();
-    },[user?.id, isLoading]);
+        handleGetUser();
+    },[user?.id, isLoading, paired]);
 
     const handleSignUp = async() =>{
         const newAccount:NewAccount={
@@ -43,7 +43,7 @@ export default function AccountPage(){
     const handleSendReqeust = async() =>{
         if(!user) return;
 
-        const receiver_id = await accountService.idByUsername(pairUsername);
+        const receiver_id = await accountService.idbyPairCode(partenersCode);
 
         if(receiver_id)
         {
@@ -62,18 +62,18 @@ export default function AccountPage(){
         }
         if(requests[index].id){
             await pairService.acceptRequest(requests[index].id);
-            handleGetRequests();
+            //await pairService.pair(user.id, requests[index].sender);
         }
 
-        handleGetPairedStatus();
-        handleGetRequests();
+        await handleGetPairedStatus();
+        await handleGetRequests();
     };
 
-    const handleGetUsername = async() => {
+    const handleGetUser = async() => {
         if(!user?.id) return;
 
-        const foundUsername = await pairService.getUsernameById(user.id);
-        setUserName(foundUsername);
+        const foundUsername = await pairService.getUserById(user.id);
+        setSelf(foundUsername);
     }
 
     const handleGetRequests = async() =>{
@@ -114,17 +114,17 @@ export default function AccountPage(){
             <div className="flex flex-col w-3/4 h-1/2">
                 <Card className="flex h-full w-full" variant="secondary">
                     <div>
-                        <Typography type="h4">Hello {username}</Typography>
+                        <Typography type="h4">Hello {self?.username}</Typography>
                     </div>
-                    {!paired?<div className="flex flex-col gap-3 w-full">
-                    <Input placeholder="enter couple's username..." onChange={(e) => setPairUsername(e.target.value)}></Input>
+                    {!paired ?<div className="flex flex-col gap-3 w-full">
+                    <Input type="number" placeholder="enter couple's pair id..." onChange={(e) => setPartenersCode(Number(e.target.value))}></Input>
                     <Button className="flex self-end" variant="outline" onClick={handleSendReqeust}><SendHorizonal/></Button>
-                    <Card className="max-h-36 md:max-h-80 overflow-y-auto overflow-x-hidden">
+                    <h1>PAIRCODE: {self?.pair_code}</h1>
+                    {requests.length > 0?<Card className="max-h-36 md:max-h-80 overflow-y-auto overflow-x-hidden">
                         {requestRender()}
-                    </Card>
-                    </div>:<></>}
-                    <div className="flex justify-center items-center w-full h-full">PAIRED WITH {}</div>
-                    <div className='flex w-full h-full justify-end items-end'>
+                    </Card>:null}
+                    </div>:null}
+                     <div className='flex w-full h-full justify-end items-end'>
                         <Button variant='danger-soft' onDoubleClick={handleSignOut}>Log out<LogOut/></Button>
                     </div>
                 </Card>

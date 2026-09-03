@@ -1,9 +1,9 @@
-import type { NewAccount } from "../types/database";
+import type { NewAccount, NewUser } from "../types/database";
 import { supabase } from "../supabase-client";
 
 export const accountService = {
     async createAccount(newAccount:NewAccount) {
-        const {data, error} = await supabase.auth.signUp({
+        const {data:signUpData, error:signUpError} = await supabase.auth.signUp({
             email:newAccount.email,
             password:newAccount.password,
             options: {
@@ -12,8 +12,27 @@ export const accountService = {
                 }
             }
         });
-        if(error) console.error("error adding account", error.message);
-        return data;
+        if(signUpError){
+            console.error("error adding account", signUpError.message);
+            return;
+        }
+
+        const newUser:NewUser = {
+            username: newAccount.username,
+            user_id: signUpData.user?.id ?? '',
+        };
+
+        const {data:userTableData, error:userTableError} = await supabase
+        .from("users")
+        .insert(newUser)
+        .single();
+
+        if(userTableError){
+            console.error("error adding user to table: ", userTableError.message);
+            return;
+        }
+
+        return signUpData && userTableData;
     },
     async signOut(){
         const { error } = await supabase.auth.signOut();
@@ -26,21 +45,11 @@ export const accountService = {
         });
         if(error) console.error("ERROR SIGNING IN", error.message);
     },
-    async pair(user_id:string, pair_id:string){
-        const { data, error } = await supabase
-        .from('users')
-        .update({pair_id:pair_id})
-        .eq('user_id', user_id)
-
-        if(error) console.error("can't pair: ", error.message);
-
-        return data;
-    },
-    async idByUsername(username:string): Promise<string | null>{
+    async idbyPairCode(pair_code:number): Promise<string | null>{
         const {data, error} = await supabase
         .from('users')
         .select('user_id')
-        .eq("username",username)
+        .eq("pair_code",pair_code)
         .maybeSingle();
 
         if(error) { 
