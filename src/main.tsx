@@ -4,6 +4,9 @@ import App from './App.tsx'
 import './index.css'
 import { UserProvider } from './contexts/UserContexts.tsx'
 import { ToastProvider } from '@heroui/react'
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW({ immediate: true })
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
