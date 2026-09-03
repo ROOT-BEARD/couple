@@ -1,4 +1,4 @@
-import { Card, Button, Typography, Input } from "@heroui/react";
+import { Card, Button, Typography } from "@heroui/react";
 import { Upload, CircleX } from "lucide-react";
 import { useRef } from "react";
 
