@@ -32,9 +32,11 @@ export default function ImageUploader({setImage, image, handleRemove}:{setImage:
                     }
                 }}/>
             </div>:
-            <div className="relative aspect-square w-full overflow-hidden rounded-3xl">
-                <img className="h-full w-full object-cover" src={URL.createObjectURL(image)}/>
-                <Button onClick={handleRemove} variant="danger-soft">
+            <div>
+                <div className="flex flex-col relative aspect-square w-full overflow-hidden rounded-3xl">
+                    <img className="h-full w-full object-cover" src={URL.createObjectURL(image)}/>
+                </div>
+                <Button className=' self-end' onClick={handleRemove} variant="danger-soft">
                     <CircleX/>
                 </Button>
             </div>
