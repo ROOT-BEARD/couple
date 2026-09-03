@@ -6,6 +6,7 @@ import { messageService } from "../services/messageService";
 import type { NewMessage } from "../types/database";
 import { useUser } from "../contexts/UserContexts";
 import { pairService } from "../services/pairSercive";
+import { toast } from "@heroui/react";
 
 export default function Dashboard(){
     const {user} = useUser();
@@ -35,9 +36,14 @@ export default function Dashboard(){
             message: messageText,
             img_url: img_url
             }   
-            await messageService.createMessage(newMessage);
+            const sent = await messageService.createMessage(newMessage);
+            if(sent){
+                toast.success("message sent");
+            } else {
+                toast.danger("did not send");
+            }
         } else {
-            console.error('oh no');
+            toast.danger("no pair found or image is missing");
         }
     };
 

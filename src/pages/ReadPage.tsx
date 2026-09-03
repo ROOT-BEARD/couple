@@ -36,7 +36,9 @@ export default function ReadPage() {
                     alt="Shared image"
                 />
             </Card>
+            <Card variant="secondary">
                 {topMessage?topMessage.message:''}
+            </Card>
         </div>
     );
 }

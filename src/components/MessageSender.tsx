@@ -15,7 +15,7 @@ export default function MessageSender({handleSend,setMessageText}:MessageSenderP
             variant='secondary'
             fullWidth/>
             <div className="flex w-full justify-end">
-                <Button onClick={handleSend} className="hover:scale-110">
+                <Button variant="outline" onClick={handleSend} className="hover:scale-110">
                     <SendHorizonal/>
                 </Button>
             </div>

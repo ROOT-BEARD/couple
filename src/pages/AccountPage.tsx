@@ -1,4 +1,4 @@
-import { Button, Card, Input, Typography } from "@heroui/react";
+import { Button, Card, Input, toast, Typography } from "@heroui/react";
 import { accountService } from "../services/accountService";
 import type { NewAccount, NewRequest, NewUser } from "../types/database";
 import { useEffect, useState } from "react";
@@ -52,7 +52,15 @@ export default function AccountPage(){
                 receiver: receiver_id
             };
 
-            await pairService.sendPairRequest(request);
+            const sent = await pairService.sendPairRequest(request);
+
+            if(sent){
+                toast.success("sent reqeust!");
+            }else{
+                toast.danger("did not send");
+            }
+        } else{
+            toast.danger("could not find user with that code");
         }
     };
 
